@@ -146,18 +146,24 @@
                 status: "Pending"
             };
 
+            console.log("Sending data:", leadData); // Debugging
+
             fetch(scriptURL, {
                 method: "POST",
                 body: JSON.stringify(leadData),
                 headers: { "Content-Type": "application/json" }
             })
             .then(response => response.text())
-            .then(() => {
+            .then((data) => {
+                console.log("Response received:", data); // Debugging
                 alert("Lead added successfully!");
                 document.getElementById("leadForm").reset();
                 fetchLeads();
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error submitting data. Check console for details.");
+            });
         }
 
         function fetchLeads() {
@@ -197,30 +203,6 @@
                     option.innerText = party;
                     partyFilter.appendChild(option);
                 });
-            })
-            .catch(error => console.error("Error:", error));
-        }
-
-        function convertLead(index) {
-            fetchLeads();
-        }
-
-        function filterLeads() {
-            let party = document.getElementById("partyFilter").value;
-            let month = document.getElementById("monthFilter").value;
-            let date = document.getElementById("dateFilter").value;
-
-            fetch(scriptURL + "?action=getLeads")
-            .then(response => response.json())
-            .then(data => {
-                let filteredLeads = data.filter(lead => {
-                    return (
-                        (party ? lead.party === party : true) &&
-                        (month ? lead.date.startsWith(month) : true) &&
-                        (date ? lead.date === date : true)
-                    );
-                });
-                displayLeads(filteredLeads);
             })
             .catch(error => console.error("Error:", error));
         }
